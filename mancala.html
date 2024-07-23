@@ -1,0 +1,425 @@
+
+<html><head><base href="/" /><title>Mancala Game with Glowing Stores</title><style>
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0e6d2;
+    font-family: Arial, sans-serif;
+    perspective: 1000px;
+}
+
+.mancala-board {
+    display: flex;
+    flex-direction: row;
+    background-color: #8b4513;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    transform: rotateX(10deg);
+}
+
+.store {
+    width: 100px;
+    height: 300px;
+    background-color: #deb887;
+    border-radius: 50px;
+    margin: 0 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-start;
+    padding-top: 20px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.3s ease;
+}
+
+.store.glow {
+    box-shadow: 0 0 20px #ffd700, inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.pits-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    justify-content: space-around;
+}
+
+.pit {
+    width: 80px;
+    height: 80px;
+    background-color: #deb887;
+    border-radius: 50%;
+    margin: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.pit:hover {
+    background-color: #d2a679;
+}
+
+.active-player .pit {
+    background-color: #ffd700;
+}
+
+.active-player .pit:hover {
+    background-color: #ffc400;
+}
+
+.marble {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin: 2px;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(circle at 30% 30%, #ff6b6b, #ff0000);
+}
+
+.marble::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.2) 50%, transparent 50%);
+}
+
+.marble::after {
+    content: '';
+    position: absolute;
+    bottom: 10%;
+    right: 10%;
+    width: 30%;
+    height: 30%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.8), transparent 70%);
+    filter: blur(1px);
+}
+
+.marble.animating {
+    transition: transform 0.5s;
+}
+
+.rules {
+    font-size: 14px;
+    color: #555;
+    text-align: left;
+    margin-top: 20px;
+    max-width: 600px;
+    display: none;
+}
+
+.rules ol {
+    padding-left: 20px;
+    margin: 0;
+}
+
+.rules li {
+    margin-bottom: 5px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.modal-buttons {
+    margin-top: 20px;
+}
+
+.modal-button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.new-game {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.cancel {
+    background-color: #f44336;
+    color: white;
+}
+
+#show-rules-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#show-rules-btn:hover {
+    background-color: #45a049;
+}
+</style></head><body>
+<div class="mancala-board">
+    <div id="store-2" class="store"></div>
+    <div class="pits-container">
+        <div class="row player-two">
+            <div class="pit" data-pit="12"></div>
+            <div class="pit" data-pit="11"></div>
+            <div class="pit" data-pit="10"></div>
+            <div class="pit" data-pit="9"></div>
+            <div class="pit" data-pit="8"></div>
+            <div class="pit" data-pit="7"></div>
+        </div>
+        <div class="row player-one active-player">
+            <div class="pit" data-pit="0"></div>
+            <div class="pit" data-pit="1"></div>
+            <div class="pit" data-pit="2"></div>
+            <div class="pit" data-pit="3"></div>
+            <div class="pit" data-pit="4"></div>
+            <div class="pit" data-pit="5"></div>
+        </div>
+    </div>
+    <div id="store-1" class="store"></div>
+</div>
+
+<button id="show-rules-btn">Show Rules</button>
+
+<div class="rules" id="rules">
+    <ol>
+        <li>Play always moves around the board counter-clockwise.</li>
+        <li>Only put marbles in your own store, not your opponent's store.</li>
+        <li>On a turn, a player picks up all the marbles in one pit and moves them to their right, placing one marble in each of the pits along the way.</li>
+        <li>If you reach your store, add a marble and continue placing remaining marbles in your opponent's pits.</li>
+        <li>If the last marble in a player's hand lands in their own empty pit, they capture that marble and all the marbles in the opposite pit.</li>
+        <li>When the last marble in a player's hand lands in their store, that player can take another turn.</li>
+        <li>Game ends when one player's pits are empty. No remaining marbles are moved when the game ends.</li>
+        <li>The player with the most marbles in their store wins.</li>
+    </ol>
+</div>
+
+<div id="gameOverModal" class="modal">
+    <div class="modal-content">
+        <h2>Game Over!</h2>
+        <p id="winnerMessage"></p>
+        <div class="modal-buttons">
+            <button class="modal-button new-game" onclick="startNewGame()">New Game</button>
+            <button class="modal-button cancel" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const board = [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0];
+let currentPlayer = 1;
+
+function createMarble() {
+    const marble = document.createElement('div');
+    marble.className = 'marble';
+    marble.style.boxShadow = 'inset 2px 2px 5px rgba(255, 255, 255, 0.4), inset -2px -2px 5px rgba(0, 0, 0, 0.4)';
+    return marble;
+}
+
+function updateBoard() {
+    for (let i = 0; i < 14; i++) {
+        let container;
+        if (i === 6) {
+            container = document.getElementById('store-1');
+        } else if (i === 13) {
+            container = document.getElementById('store-2');
+        } else {
+            container = document.querySelector(`[data-pit="${i}"]`);
+        }
+        container.innerHTML = '';
+        for (let j = 0; j < board[i]; j++) {
+            container.appendChild(createMarble());
+        }
+    }
+}
+
+function switchPlayer() {
+    currentPlayer = 3 - currentPlayer;
+    document.querySelector('.player-one').classList.toggle('active-player');
+    document.querySelector('.player-two').classList.toggle('active-player');
+}
+
+function isGameOver() {
+    return board.slice(0, 6).every(pit => pit === 0) || board.slice(7, 13).every(pit => pit === 0);
+}
+
+function endGame() {
+    updateBoard();
+    
+    const player1Score = board[6];
+    const player2Score = board[13];
+    const winner = player1Score > player2Score ? 'Player 1' : player2Score > player1Score ? 'Player 2' : 'It\'s a tie';
+    document.getElementById('winnerMessage').textContent = `${winner} wins! Final score: Player 1 (${player1Score}) - Player 2 (${player2Score})`;
+    document.getElementById('gameOverModal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('gameOverModal').style.display = 'none';
+}
+
+function startNewGame() {
+    for (let i = 0; i < 14; i++) {
+        if (i === 6 || i === 13) {
+            board[i] = 0;
+        } else {
+            board[i] = 4;
+        }
+    }
+    currentPlayer = 1;
+    document.querySelector('.player-one').classList.add('active-player');
+    document.querySelector('.player-two').classList.remove('active-player');
+    updateBoard();
+    closeModal();
+}
+
+function glowStore(storeId) {
+    const store = document.getElementById(storeId);
+    store.classList.add('glow');
+    setTimeout(() => {
+        store.classList.remove('glow');
+    }, 500);
+}
+
+function animateMarble(marble, fromPit, toPit) {
+    const fromRect = document.querySelector(`[data-pit="${fromPit}"]`).getBoundingClientRect();
+    let toRect;
+    
+    if (toPit === 6) {
+        toRect = document.getElementById('store-1').getBoundingClientRect();
+    } else if (toPit === 13) {
+        toRect = document.getElementById('store-2').getBoundingClientRect();
+    } else {
+        toRect = document.querySelector(`[data-pit="${toPit}"]`).getBoundingClientRect();
+    }
+    
+    const deltaX = toRect.left - fromRect.left;
+    const deltaY = toRect.top - fromRect.top;
+    
+    marble.style.position = 'absolute';
+    marble.style.left = `${fromRect.left}px`;
+    marble.style.top = `${fromRect.top}px`;
+    marble.classList.add('animating');
+    document.body.appendChild(marble);
+    
+    setTimeout(() => {
+        marble.style.transform = `translate(${deltaX}px, ${deltaY}px) rotate(360deg)`;
+        marble.addEventListener('transitionend', () => {
+            document.body.removeChild(marble);
+            updateBoard();
+            if (toPit === 6) {
+                glowStore('store-1');
+            } else if (toPit === 13) {
+                glowStore('store-2');
+            }
+        }, { once: true });
+    }, 50);
+}
+
+function makeMove(pit) {
+    if (board[pit] === 0 || (currentPlayer === 1 && pit > 5) || (currentPlayer === 2 && pit < 7)) return;
+    
+    let stones = board[pit];
+    board[pit] = 0;
+    let currentPit = pit;
+    let lastPit = -1;
+    let anotherTurn = false;
+    
+    function distributeStone(index) {
+        if (index >= stones) {
+            if (lastPit === (currentPlayer === 1 ? 6 : 13)) {
+                anotherTurn = true;
+            } else if (board[lastPit] === 1 && 
+                       ((currentPlayer === 1 && lastPit < 6) || (currentPlayer === 2 && lastPit > 6 && lastPit < 13))) {
+                const oppositePit = 12 - lastPit;
+                if (board[oppositePit] > 0) {
+                    board[currentPlayer === 1 ? 6 : 13] += board[oppositePit] + 1;
+                    board[oppositePit] = 0;
+                    board[lastPit] = 0;
+                }
+            }
+            
+            updateBoard();
+            if (isGameOver()) {
+                endGame();
+            } else if (!anotherTurn) {
+                switchPlayer();
+            }
+            return;
+        }
+        
+        setTimeout(() => {
+            currentPit = (currentPit + 1) % 14;
+            if ((currentPlayer === 1 && currentPit === 13) || (currentPlayer === 2 && currentPit === 6)) {
+                currentPit = (currentPit + 1) % 14;
+            }
+            board[currentPit]++;
+            lastPit = currentPit;
+            const marble = createMarble();
+            animateMarble(marble, pit, currentPit);
+            
+            distributeStone(index + 1);
+        }, 300);
+    }
+    
+    distributeStone(0);
+}
+
+document.querySelectorAll('.pit').forEach(pit => {
+    pit.addEventListener('click', () => {
+        const pitIndex = parseInt(pit.getAttribute('data-pit'));
+        if ((currentPlayer === 1 && pitIndex <= 5) || (currentPlayer === 2 && pitIndex >= 7 && pitIndex <= 12)) {
+            makeMove(pitIndex);
+        }
+    });
+});
+
+document.getElementById('show-rules-btn').addEventListener('click', () => {
+    const rules = document.getElementById('rules');
+    const button = document.getElementById('show-rules-btn');
+    if (rules.style.display === 'none' || rules.style.display === '') {
+        rules.style.display = 'block';
+        button.textContent = 'Hide Rules';
+    } else {
+        rules.style.display = 'none';
+        button.textContent = 'Show Rules';
+    }
+});
+
+updateBoard();
+</script>
+</body></html>
