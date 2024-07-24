@@ -1,15 +1,16 @@
 
-<html><head><base href="/" /><title>Mancala Game Online</title><style>
+<html><head><base href="/" /><title>Play Mancala Online</title><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"><style>
 body {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
     background-color: #f0e6d2;
     font-family: Arial, sans-serif;
     perspective: 1000px;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .mancala-board {
@@ -20,13 +21,18 @@ body {
     padding: 20px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     transform: rotateX(10deg);
+    transition: background-color 0.3s ease;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .store {
-    width: 100px;
-    height: 300px;
+    width: 15vw;
+    max-width: 100px;
+    height: 45vw;
+    max-height: 300px;
     background-color: #deb887;
-    border-radius: 50px;
+    border-radius: 25px;
     margin: 0 10px;
     display: flex;
     flex-wrap: wrap;
@@ -34,7 +40,7 @@ body {
     align-content: flex-start;
     padding-top: 20px;
     box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
 }
 
 .store.glow {
@@ -52,11 +58,13 @@ body {
 }
 
 .pit {
-    width: 80px;
-    height: 80px;
+    width: 12vw;
+    height: 12vw;
+    max-width: 80px;
+    max-height: 80px;
     background-color: #deb887;
     border-radius: 50%;
-    margin: 10px;
+    margin: 1vw;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -79,8 +87,10 @@ body {
 }
 
 .marble {
-    width: 20px;
-    height: 20px;
+    width: 3vw;
+    height: 3vw;
+    max-width: 20px;
+    max-height: 20px;
     border-radius: 50%;
     margin: 2px;
     position: relative;
@@ -113,13 +123,16 @@ body {
     transition: transform 0.5s;
 }
 
-.rules {
+.rules, .about {
     font-size: 14px;
-    color: #555;
     text-align: left;
     margin-top: 20px;
-    max-width: 600px;
+    max-width: 90%;
     display: none;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .rules ol {
@@ -127,7 +140,7 @@ body {
     margin: 0;
 }
 
-.rules li {
+.rules li, .about p {
     margin-bottom: 5px;
 }
 
@@ -148,7 +161,8 @@ body {
     margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 300px;
+    width: 80%;
+    max-width: 300px;
     text-align: center;
     border-radius: 10px;
 }
@@ -176,23 +190,221 @@ body {
     color: white;
 }
 
-#show-rules-btn {
+.game-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
+    width: 100%;
+    max-width: 600px;
 }
 
-#show-rules-btn:hover {
-    background-color: #45a049;
+.game-options {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.option-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+select, button {
+    margin: 5px 0;
+    padding: 5px 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.game-links {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.game-links a {
+    color: #4CAF50;
+    text-decoration: none;
+    margin: 5px 10px;
+    transition: color 0.3s ease;
+}
+
+.game-links a:hover {
+    text-decoration: underline;
+}
+
+.player-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: color 0.3s ease;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    letter-spacing: 1px;
+}
+
+#player-names {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 10px;
+}
+
+.dark-mode {
+    background-color: #333;
+    color: #fff;
+}
+
+.dark-mode .mancala-board {
+    background-color: #555;
+}
+
+.dark-mode .store, .dark-mode .pit {
+    background-color: #777;
+}
+
+.dark-mode .game-links a {
+    color: #7FFF00;
+}
+
+.dark-mode .rules, .dark-mode .about {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.ocean-mode {
+    background-color: #0077be;
+    color: #fff;
+}
+
+.ocean-mode .mancala-board {
+    background-color: #005a8c;
+}
+
+.ocean-mode .store, .ocean-mode .pit {
+    background-color: #00a6ed;
+}
+
+.ocean-mode .game-links a {
+    color: #ffd700;
+}
+
+.ocean-mode .rules, .ocean-mode .about {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.forest-mode {
+    background-color: #228b22;
+    color: #fff;
+}
+
+.forest-mode .mancala-board {
+    background-color: #006400;
+}
+
+.forest-mode .store, .forest-mode .pit {
+    background-color: #32cd32;
+}
+
+.forest-mode .game-links a {
+    color: #ffd700;
+}
+
+.forest-mode .rules, .forest-mode .about {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.pastel-mode {
+    background-color: #FFB3BA;
+    color: #333;
+}
+
+.pastel-mode .mancala-board {
+    background-color: #BAFFC9;
+}
+
+.pastel-mode .store, .pastel-mode .pit {
+    background-color: #BAE1FF;
+}
+
+.pastel-mode .game-links a {
+    color: #FF69B4;
+}
+
+.pastel-mode .rules, .pastel-mode .about {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: #333;
+}
+
+.player-name-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 10px;
+}
+
+.store-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@media (max-width: 600px) {
+    .mancala-board {
+        transform: none;
+        padding: 10px;
+    }
+
+    .store {
+        width: 12vw;
+        height: 40vw;
+    }
+
+    .pit {
+        width: 10vw;
+        height: 10vw;
+        margin: 0.5vw;
+    }
+
+    .marble {
+        width: 2.5vw;
+        height: 2.5vw;
+    }
+
+    .player-name {
+        font-size: 4vw;
+    }
+
+    .game-links {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .game-links a {
+        margin: 5px 0;
+    }
 }
 </style></head><body>
+<div class="player-name-container">
+    <div class="store-container">
+        <div class="player-name" id="player2-name">Player 2</div>
+        <div id="store-2" class="store"></div>
+    </div>
+    <div class="store-container">
+        <div class="player-name" id="player1-name">Player 1</div>
+        <div id="store-1" class="store"></div>
+    </div>
+</div>
 <div class="mancala-board">
-    <div id="store-2" class="store"></div>
     <div class="pits-container">
         <div class="row player-two">
             <div class="pit" data-pit="12"></div>
@@ -211,10 +423,16 @@ body {
             <div class="pit" data-pit="5"></div>
         </div>
     </div>
-    <div id="store-1" class="store"></div>
 </div>
 
-<button id="show-rules-btn">Show Rules</button>
+<div class="game-controls">
+    <div class="game-links">
+        <a href="#" id="new-game-link">New Game</a> | 
+        <a href="#" id="see-rules-link">See Rules</a> | 
+        <a href="#" id="display-link">Display</a> | 
+        <a href="#" id="about-link">About</a>
+    </div>
+</div>
 
 <div class="rules" id="rules">
     <ol>
@@ -227,6 +445,22 @@ body {
         <li>Game ends when one player's pits are empty. No remaining marbles are moved when the game ends.</li>
         <li>The player with the most marbles in their store wins.</li>
     </ol>
+</div>
+
+<div class="about" id="about">
+    <p>This Mancala online game was created by Whitney O'Banner using WebSim Creation Engine, an advanced AI model designed to generate interactive web content. The game features classic Mancala gameplay with a modern, responsive interface.</p>
+    <p>Developed using HTML, CSS, and JavaScript, this implementation showcases the capabilities of AI in creating engaging, playable web experiences. Enjoy the game and feel free to explore its features!</p>
+</div>
+
+<div id="display-options" style="display: none;">
+    <label for="display-mode">Display Mode:</label>
+    <select id="display-mode">
+        <option value="classic">Classic</option>
+        <option value="dark">Dark</option>
+        <option value="ocean">Ocean</option>
+        <option value="forest">Forest</option>
+        <option value="pastel">Pastel</option>
+    </select>
 </div>
 
 <div id="gameOverModal" class="modal">
@@ -408,15 +642,69 @@ document.querySelectorAll('.pit').forEach(pit => {
     });
 });
 
-document.getElementById('show-rules-btn').addEventListener('click', () => {
+document.getElementById('see-rules-link').addEventListener('click', (e) => {
+    e.preventDefault();
     const rules = document.getElementById('rules');
-    const button = document.getElementById('show-rules-btn');
+    const link = document.getElementById('see-rules-link');
     if (rules.style.display === 'none' || rules.style.display === '') {
         rules.style.display = 'block';
-        button.textContent = 'Hide Rules';
+        link.textContent = 'Hide Rules';
     } else {
         rules.style.display = 'none';
-        button.textContent = 'Show Rules';
+        link.textContent = 'See Rules';
+    }
+});
+
+document.getElementById('new-game-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    startNewGame();
+});
+
+document.getElementById('display-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    const displayOptions = document.getElementById('display-options');
+    if (displayOptions.style.display === 'none') {
+        displayOptions.style.display = 'block';
+    } else {
+        displayOptions.style.display = 'none';
+    }
+});
+
+document.getElementById('about-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    const about = document.getElementById('about');
+    const link = document.getElementById('about-link');
+    if (about.style.display === 'none' || about.style.display === '') {
+        about.style.display = 'block';
+        link.textContent = 'Hide About';
+    } else {
+        about.style.display = 'none';
+        link.textContent = 'About';
+    }
+});
+
+document.getElementById('display-mode').addEventListener('change', (e) => {
+    const mode = e.target.value;
+    const body = document.body;
+    
+    body.className = ''; // Remove all classes
+    
+    switch (mode) {
+        case 'dark':
+            body.classList.add('dark-mode');
+            break;
+        case 'ocean':
+            body.classList.add('ocean-mode');
+            break;
+        case 'forest':
+            body.classList.add('forest-mode');
+            break;
+        case 'pastel':
+            body.classList.add('pastel-mode');
+            break;
+        default:
+            // Classic mode, no additional class needed
+            break;
     }
 });
 
