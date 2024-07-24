@@ -395,16 +395,13 @@ select, button {
 }
 </style></head><body>
 <div class="player-name-container">
-    <div class="store-container">
-        <div class="player-name" id="player2-name">Player 2</div>
-        <div id="store-2" class="store"></div>
-    </div>
-    <div class="store-container">
-        <div class="player-name" id="player1-name">Player 1</div>
-        <div id="store-1" class="store"></div>
-    </div>
+    <div class="player-name" id="player2-name">Player 2</div>
+    <div class="player-name" id="player1-name">Player 1</div>
 </div>
 <div class="mancala-board">
+    <div class="store-container">
+        <div id="store-2" class="store"></div>
+    </div>
     <div class="pits-container">
         <div class="row player-two">
             <div class="pit" data-pit="12"></div>
@@ -422,6 +419,9 @@ select, button {
             <div class="pit" data-pit="4"></div>
             <div class="pit" data-pit="5"></div>
         </div>
+    </div>
+    <div class="store-container">
+        <div id="store-1" class="store"></div>
     </div>
 </div>
 
@@ -448,7 +448,7 @@ select, button {
 </div>
 
 <div class="about" id="about">
-    <p>This Mancala online game was created by Whitney O'Banner using WebSim Creation Engine, an advanced AI model designed to generate interactive web content. The game features classic Mancala gameplay with a modern, responsive interface.</p>
+    <p>This Mancala game was created by the WebSim Creation Engine, an advanced AI model designed to generate interactive web content. The game features classic Mancala gameplay with a modern, responsive interface.</p>
     <p>Developed using HTML, CSS, and JavaScript, this implementation showcases the capabilities of AI in creating engaging, playable web experiences. Enjoy the game and feel free to explore its features!</p>
 </div>
 
